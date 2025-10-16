@@ -1,6 +1,7 @@
 from playwright.sync_api import sync_playwright
 import logging
 import csv, time, datetime
+import random
 
 def launch_site(headless: bool = True):
     try:
@@ -15,7 +16,6 @@ def launch_site(headless: bool = True):
         logging.info("Navigating to https://www.youtube.com")
         page.goto("https://www.youtube.com")
         logging.info("Waiting for network to be idle")
-        page.wait_for_load_state("networkidle")
         logging.info("Site launched and ready")
         return page, browser, context
     except Exception as e:
@@ -37,8 +37,9 @@ def click_youtube_shorts(page):
     try:
         logging.info("Clicking on YouTube Shorts")
         page.locator("a:has-text('Shorts')").click()
-        page.wait_for_load_state("networkidle")
         logging.info("Navigated to YouTube Shorts")
+        page.wait_for_selector("ytd-reel-video-renderer", timeout=15000)
+        time.sleep(5)
     except Exception as e:
         logging.error(f"Error clicking YouTube Shorts: {e}")
 
@@ -46,10 +47,33 @@ def click_home(page):
     try:
         logging.info("Clicking on Home")
         page.locator("a:has-text('Home')").click()
-        page.wait_for_load_state("networkidle")
+        page.wait_for_selector("a.yt-lockup-metadata-view-model__title", timeout=15000)
         logging.info("Navigated to Home")
     except Exception as e:
         logging.error(f"Error clicking Home: {e}")
+
+def select_random_video(page):
+    try:
+        logging.info("Waiting for video cards to load on the home page...")
+        videos = page.locator("a.yt-lockup-metadata-view-model__title")
+        count = videos.count()
+        logging.info(f"Found {count} video cards on this page.")
+        if count == 0:
+            logging.error("No video cards found on the home page.")
+            return
+        idx = random.randint(0, count - 1)
+        logging.info(f"Clicking video card #{idx + 1}.")
+        videos.nth(idx).click()
+        page.wait_for_selector("video.html5-main-video", timeout=15000)
+        logging.info("Random video selected and opened.")
+    except Exception as e:
+        logging.error(f"Error selecting random video: {e}")
+
+def run_random_video_selection(page, iterations: int = 5):
+    for i in range(iterations):
+        logging.info(f"Selecting random video iteration {i + 1} of {iterations}")
+        select_random_video(page)
+        time.sleep(5)
 
 def main(headless: bool = True):
     initialize_logging()
@@ -57,6 +81,10 @@ def main(headless: bool = True):
     accept_cookies(page)
     click_youtube_shorts(page)
     click_home(page)
+    run_random_video_selection(page, iterations=5)
+    logging.info("Waiting for 10 seconds before closing the browser...")
+    time.sleep(10)
+    browser.close()
 
 
 if __name__ == "__main__":
