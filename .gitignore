@@ -31,4 +31,5 @@ Desktop.ini
 
 # Misc
 .DS_Store
+.env
 

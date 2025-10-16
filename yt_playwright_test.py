@@ -52,20 +52,46 @@ def click_home(page):
     except Exception as e:
         logging.error(f"Error clicking Home: {e}")
 
+def get_visible_video_indices(videos):
+    count = videos.count()
+    return [i for i in range(count) if videos.nth(i).is_visible()]
+
+def click_video_by_index(page, videos, idx):
+    videos.nth(idx).scroll_into_view_if_needed()
+    videos.nth(idx).click()
+
+def wait_for_video_player(page, url_before):
+    try:
+        page.wait_for_selector("video.html5-main-video", timeout=15000)
+        url_after = page.url
+        logging.info(f"URL after click: {url_after}")
+        if url_after == url_before:
+            logging.warning("URL did not change after click. Possible navigation issue.")
+        logging.info("Random video selected and opened.")
+    except Exception as e:
+        logging.error(f"Video player did not appear after click: {e}")
+        html = page.content()
+        logging.debug(f"Page HTML after failed navigation:\n{html[:2000]}")
+
 def select_random_video(page):
     try:
-        logging.info("Waiting for video cards to load on the home page...")
+        logging.info("Waiting for video cards to load on the page...")
         videos = page.locator("a.yt-lockup-metadata-view-model__title")
         count = videos.count()
         logging.info(f"Found {count} video cards on this page.")
         if count == 0:
-            logging.error("No video cards found on the home page.")
+            logging.error("No video cards found on the page.")
             return
-        idx = random.randint(0, count - 1)
-        logging.info(f"Clicking video card #{idx + 1}.")
-        videos.nth(idx).click()
-        page.wait_for_selector("video.html5-main-video", timeout=15000)
-        logging.info("Random video selected and opened.")
+        visible_indices = get_visible_video_indices(videos)
+        if not visible_indices:
+            logging.error("No visible video cards found on the page.")
+            return
+        idx = random.choice(visible_indices)
+        logging.info(f"Clicking visible video card #{idx + 1}.")
+        url_before = page.url
+        logging.info(f"URL before click: {url_before}")
+        click_video_by_index(page, videos, idx)
+        wait_for_video_player(page, url_before)
     except Exception as e:
         logging.error(f"Error selecting random video: {e}")
 
