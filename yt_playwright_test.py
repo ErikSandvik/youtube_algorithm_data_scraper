@@ -2,6 +2,7 @@ from playwright.sync_api import sync_playwright
 import logging
 import csv, time, datetime
 import random
+from urllib.parse import urljoin
 
 def launch_site(headless: bool = True):
     try:
@@ -56,9 +57,9 @@ def get_visible_video_indices(videos):
     count = videos.count()
     return [i for i in range(count) if videos.nth(i).is_visible()]
 
-def click_video_by_index(page, videos, idx):
-    videos.nth(idx).scroll_into_view_if_needed()
-    videos.nth(idx).click()
+def click_video_by_index(videos, index):
+    videos.nth(index).scroll_into_view_if_needed()
+    videos.nth(index).click()
 
 def wait_for_video_player(page, url_before):
     try:
@@ -73,10 +74,11 @@ def wait_for_video_player(page, url_before):
         html = page.content()
         logging.debug(f"Page HTML after failed navigation:\n{html[:2000]}")
 
-def select_random_video(page):
+def select_random_video_and_get_recommendations(page):
     try:
         logging.info("Waiting for video cards to load on the page...")
         videos = page.locator("a.yt-lockup-metadata-view-model__title")
+
         count = videos.count()
         logging.info(f"Found {count} video cards on this page.")
         if count == 0:
@@ -86,19 +88,42 @@ def select_random_video(page):
         if not visible_indices:
             logging.error("No visible video cards found on the page.")
             return
-        idx = random.choice(visible_indices)
-        logging.info(f"Clicking visible video card #{idx + 1}.")
-        url_before = page.url
-        logging.info(f"URL before click: {url_before}")
-        click_video_by_index(page, videos, idx)
-        wait_for_video_player(page, url_before)
+
+        recommended_video_urls = get_recommended_video_urls(videos)
+        visible_recommended_urls = [recommended_video_urls[i] for i in visible_indices]
+
+        select_random_video(page, videos, visible_indices)
+
+        return visible_recommended_urls
     except Exception as e:
         logging.error(f"Error selecting random video: {e}")
+
+def select_random_video(page, videos, possible_indices):
+    chosen_video_index = random.choice(possible_indices)
+    logging.info(f"Clicking visible video card #{chosen_video_index + 1}.")
+    url_before = page.url
+    logging.info(f"URL before click: {url_before}")
+
+    click_video_by_index(videos, chosen_video_index)
+    wait_for_video_player(page, url_before)
+
+def get_recommended_video_urls(videos_locator):
+    try:
+        hrefs = videos_locator.evaluate_all("els => els.map(e => e.getAttribute('href'))")
+        full_urls = []
+        for href in hrefs:
+            if href:
+                full_url = urljoin("https://www.youtube.com", href)
+                full_urls.append(full_url)
+        return full_urls
+    except Exception as e:
+        logging.error(f"Error getting video URLs: {e}")
+        return []
 
 def run_random_video_selection(page, iterations: int = 5):
     for i in range(iterations):
         logging.info(f"Selecting random video iteration {i + 1} of {iterations}")
-        select_random_video(page)
+        select_random_video_and_get_recommendations(page)
         time.sleep(5)
 
 def main(headless: bool = True):
