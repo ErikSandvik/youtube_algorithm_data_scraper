@@ -11,7 +11,7 @@ def get_video_id_from_url(video_url: str) -> str:
 def get_video_ids_from_urls(video_urls: list) -> list:
     return [get_video_id_from_url(url) for url in video_urls]
 
-def call_youtube_api(video_id: str) -> dict:
+def fetch_video_data(video_id: str) -> dict:
     api_url = (
         f"https://www.googleapis.com/youtube/v3/videos"
         f"?part=snippet,contentDetails,statistics"
@@ -38,9 +38,21 @@ def call_youtube_api_multiple(video_ids: list) -> dict:
     else:
         response.raise_for_status()
 
+def fetch_youtube_categories() -> dict:
+    api_url = (
+        f"https://www.googleapis.com/youtube/v3/videoCategories"
+        f"?part=snippet"
+        f"&regionCode=US"
+        f"&key={API_KEY}"
+    )
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        response.raise_for_status()
 
 if __name__ == "__main__":
     sample_video_url = "https://www.youtube.com/watch?v=lV_QcwbTlZU"
     video_id = get_video_id_from_url(sample_video_url)
-    video_data = call_youtube_api(video_id)
+    video_data = fetch_video_data(video_id)
     print(video_data)
