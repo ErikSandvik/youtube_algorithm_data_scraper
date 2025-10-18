@@ -3,33 +3,25 @@ __pycache__/
 *.py[cod]
 *.pyo
 *.pyd
-*.env
-*.venv/
-env/
 venv/
-ENV/
-env.bak/
-venv.bak/
-*.sqlite3
-
-# Playwright
-playwright-report/
-test-results/
-ms-playwright/
+.env
+.venv/
 
 # PyCharm
 .idea/
-*.iml
 
-# Windows
+# Docker
+*.env
+docker-compose.override.yml
+
+# OS
+.DS_Store
 Thumbs.db
-ehthumbs.db
-Desktop.ini
 
-# VS Code
+# VSCode
 .vscode/
 
-# Misc
-.DS_Store
-.env
+# Local DB data (if you ever store it in the repo)
+db_data/
+pgadmin_data/
 
