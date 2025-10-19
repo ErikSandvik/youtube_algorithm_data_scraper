@@ -82,3 +82,4 @@ if __name__ == "__main__":
     with get_session() as session:
         sync_categories_from_youtube(session)
     main_loop()
+
