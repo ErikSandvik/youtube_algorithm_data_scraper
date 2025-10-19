@@ -12,7 +12,11 @@ def launch_site(p, headless: bool = True):
         logging.info("Launching Chromium browser")
         browser = p.chromium.launch(headless=headless)
         logging.info("Creating new browser context")
-        context = browser.new_context()
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+            viewport={"width": 1920, "height": 1080},
+            locale="en-US"
+        )
         logging.info("Opening new page")
         page = context.new_page()
         logging.info("Navigating to https://www.youtube.com")
@@ -152,4 +156,4 @@ def run_yt_agent(headless: bool = True, iterations: int = 10):
                 browser.close()
 
 if __name__ == "__main__":
-    recommendations = run_yt_agent(headless=False)
+    recommendations = run_yt_agent(headless=True)

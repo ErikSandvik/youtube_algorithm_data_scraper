@@ -33,7 +33,7 @@ def is_video_data_valid(video_data: dict) -> bool:
 def gather_recommendations_insert_into_db(session, videos_to_click: int = 3):
     logging.info(f"Starting new data gathering cycle with {videos_to_click} videos to click.")
 
-    recommendations = run_yt_agent(headless=False, iterations=videos_to_click)
+    recommendations = run_yt_agent(headless=True, iterations=videos_to_click)
     if not recommendations:
         logging.warning("No recommendations were gathered from the agent. Skipping this cycle.")
         return
