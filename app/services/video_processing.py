@@ -24,7 +24,7 @@ def process_and_insert_video_from_json(session: Session, video_json_item: Dict[s
         "description": snippet.get("description"),
         "channel_id": snippet.get("channelId"),
         "channel_title": snippet.get("channelTitle"),
-        "tags_json": snippet.get("tags"),
+        "tags": snippet.get("tags"),
         "category_id": int(snippet["categoryId"]) if snippet.get("categoryId") else None,
         "published_at": datetime.fromisoformat(snippet["publishedAt"].replace("Z", "+00:00")) if snippet.get("publishedAt") else None,
         "language": snippet.get("defaultLanguage") or snippet.get("defaultAudioLanguage"),
@@ -41,5 +41,3 @@ def process_and_insert_video_from_json(session: Session, video_json_item: Dict[s
     except Exception as e:
         logger.error(f"Failed to save video {video_data['video_id']}: {e}", exc_info=True)
         raise
-
-

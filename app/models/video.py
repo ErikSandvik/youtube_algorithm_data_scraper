@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import String, Text, Integer, BigInteger, DateTime, Index, ForeignKey
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import ARRAY
 from .base import Base
 from datetime import datetime
 
@@ -23,7 +23,7 @@ class Video(Base):
     channel_title: Mapped[str | None] = mapped_column(String(300), nullable=True)
 
     # Tags (JSON array)
-    tags_json: Mapped[dict | list | None] = mapped_column(JSONB, nullable=True)
+    tags: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
 
     # Category & timestamps
     category_id: Mapped[int | None] = mapped_column(ForeignKey("categories.id"), nullable=True)

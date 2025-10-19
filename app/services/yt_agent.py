@@ -4,10 +4,11 @@ import csv, time, datetime
 import random
 from urllib.parse import urljoin
 
-def launch_site(headless: bool = True):
+logging.basicConfig(level=logging.INFO)
+
+def launch_site(p, headless: bool = True):
     try:
         logging.info(f"Starting Playwright with headless={headless}")
-        p = sync_playwright().start()
         logging.info("Launching Chromium browser")
         browser = p.chromium.launch(headless=headless)
         logging.info("Creating new browser context")
@@ -30,14 +31,10 @@ def accept_cookies(page):
     except Exception as e:
         logging.warning(f"No cookie consent button found or error occurred: {e}")
 
-
-def initialize_logging():
-    logging.basicConfig(level=logging.INFO)
-
 def click_youtube_shorts(page):
     try:
         logging.info("Clicking on YouTube Shorts")
-        page.locator("a:has-text('Shorts')").click()
+        page.locator("a:has-text('Shorts')").first.click()
         logging.info("Navigated to YouTube Shorts")
         page.wait_for_selector("ytd-reel-video-renderer", timeout=15000)
         time.sleep(5)
@@ -47,7 +44,7 @@ def click_youtube_shorts(page):
 def click_home(page):
     try:
         logging.info("Clicking on Home")
-        page.locator("a:has-text('Home')").click()
+        page.locator("a:has-text('Home')").first.click()
         page.wait_for_selector("a.yt-lockup-metadata-view-model__title", timeout=15000)
         logging.info("Navigated to Home")
     except Exception as e:
@@ -121,22 +118,38 @@ def get_recommended_video_urls(videos_locator):
         return []
 
 def run_random_video_selection(page, iterations: int = 5):
+    recommendations = []
     for i in range(iterations):
         logging.info(f"Selecting random video iteration {i + 1} of {iterations}")
-        select_random_video_and_get_recommendations(page)
+        recommended_links = select_random_video_and_get_recommendations(page)
+        if recommended_links:
+            recommendations.extend(recommended_links)
         time.sleep(5)
+    return recommendations
 
-def main(headless: bool = True):
-    initialize_logging()
-    page, browser, context = launch_site(headless)
-    accept_cookies(page)
-    click_youtube_shorts(page)
-    click_home(page)
-    run_random_video_selection(page, iterations=5)
-    logging.info("Waiting for 10 seconds before closing the browser...")
-    time.sleep(10)
-    browser.close()
+def run_yt_agent(headless: bool = True, iterations: int = 10):
+    with sync_playwright() as p:
+        page, browser, context = launch_site(p, headless)
+        if not page:
+            logging.error("Failed to launch site, aborting agent run.")
+            return []
 
+        try:
+            accept_cookies(page)
+            click_youtube_shorts(page)
+            click_home(page)
+            recommendations = run_random_video_selection(page, iterations)
+
+            logging.info("Waiting for 10 seconds before closing the browser...")
+            time.sleep(10)
+
+            return recommendations
+        except Exception as e:
+            logging.error(f"An error occurred during agent execution: {e}", exc_info=True)
+            return []
+        finally:
+            if browser:
+                browser.close()
 
 if __name__ == "__main__":
-    main(headless=False)
+    recommendations = run_yt_agent(headless=False)

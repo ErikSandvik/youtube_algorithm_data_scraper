@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from app.services.youtube_api_caller import fetch_youtube_categories
 
 from app.models.category import Category
+from app.crud.category import get_category_by_name
 
 logger = logging.getLogger(__name__)
 
@@ -17,18 +18,33 @@ def sync_categories_from_youtube(session: Session):
         logger.error(f"Could not fetch or parse categories from YouTube API: {e}")
         return
 
-    new_categories_added = 0
-    for item in api_categories_raw:
-        cat_id = int(item['id'])
-        # Check if the category already exists in the database
-        if not session.get(Category, cat_id):
-            cat_name = item.get('snippet', {}).get('title', 'Unknown')
-            logger.info(f"New category found: ID={cat_id}, Name='{cat_name}'. Adding to DB.")
-            session.add(Category(id=cat_id, name=cat_name))
-            new_categories_added += 1
+    processed_names = set()
 
-    if new_categories_added > 0:
+    for cat_item in api_categories_raw:
+        cat_id = int(cat_item['id'])
+        cat_name = cat_item['snippet']['title']
+
+        if cat_name in processed_names:
+            continue
+
+        existing_category = get_category_by_name(session, cat_name)
+
+        if existing_category:
+            if existing_category.id != cat_id:
+                logger.warning(
+                    f"Category '{cat_name}' already exists with ID {existing_category.id}, "
+                    f"but API returned new ID {cat_id}. Skipping update to avoid conflicts."
+                )
+        else:
+            new_category = Category(id=cat_id, name=cat_name)
+            session.add(new_category)
+            processed_names.add(cat_name)
+            logger.info(f"New category found: ID={cat_id}, Name='{cat_name}'. Adding to DB.")
+
+    try:
         session.commit()
-        logger.info(f"Category population complete. Added {new_categories_added} new categories.")
-    else:
-        logger.info("Category population complete. No new categories to add.")
+        logger.info("--- Category Sync Finished ---")
+    except Exception as e:
+        logger.error(f"An error occurred during category sync commit: {e}", exc_info=True)
+        session.rollback()
+        raise
