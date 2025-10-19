@@ -57,7 +57,7 @@ class TestMainIntegration(unittest.TestCase):
 
         gather_recommendations_insert_into_db(self.session, videos_to_click=1)
 
-        mock_run_yt_agent.assert_called_once_with(headless=False, iterations=1)
+        mock_run_yt_agent.assert_called_once_with(headless=True, iterations=1)
         mock_fetch_data.assert_called_once_with(MOCK_VIDEO_URLS)
 
         mock_process_insert.assert_called_once()
