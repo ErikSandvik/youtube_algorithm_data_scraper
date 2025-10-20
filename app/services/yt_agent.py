@@ -75,7 +75,10 @@ def wait_for_video_player(page, url_before):
         html = page.content()
         logging.debug(f"Page HTML after failed navigation:\n{html[:2000]}")
 
-def select_random_video_and_get_recommendations(page):
+def get_video_id_from_url(url: str) -> str:
+    return url.split("v=")[-1][:11]
+
+def select_random_video_and_get_recommendations(page, iteration: int):
     try:
         logging.info("Waiting for video cards to load on the page...")
         videos = page.locator("a.yt-lockup-metadata-view-model__title")
@@ -84,20 +87,34 @@ def select_random_video_and_get_recommendations(page):
         logging.info(f"Found {count} video cards on this page.")
         if count == 0:
             logging.error("No video cards found on the page.")
-            return
+            return []
         visible_indices = get_visible_video_indices(videos)
         if not visible_indices:
             logging.error("No visible video cards found on the page.")
-            return
+            return []
 
         recommended_video_urls = get_recommended_video_urls(videos)
-        visible_recommended_urls = [recommended_video_urls[i] for i in visible_indices]
+
+        source_video_id = None
+        if "watch?v=" in page.url:
+            source_video_id = get_video_id_from_url(page.url)
+
+        visible_recommended_urls = [
+            {
+                "url": recommended_video_urls[i],
+                "iteration": iteration,
+                "position": i,
+                "source_video_id": source_video_id,
+            }
+            for i in visible_indices
+        ]
 
         select_random_video(page, videos, visible_indices)
 
         return visible_recommended_urls
     except Exception as e:
         logging.error(f"Error selecting random video: {e}")
+        return []
 
 def select_random_video(page, videos, possible_indices):
     chosen_video_index = random.choice(possible_indices)
@@ -125,7 +142,8 @@ def run_random_video_selection(page, iterations: int = 5):
     recommendations = []
     for i in range(iterations):
         logging.info(f"Selecting random video iteration {i + 1} of {iterations}")
-        recommended_links = select_random_video_and_get_recommendations(page)
+        # Pass the iteration number (i + 1) to the function
+        recommended_links = select_random_video_and_get_recommendations(page, i + 1)
         if recommended_links:
             recommendations.extend(recommended_links)
         time.sleep(5)
@@ -147,6 +165,7 @@ def run_yt_agent(headless: bool = True, iterations: int = 10):
             logging.info("Waiting for 10 seconds before closing the browser...")
             time.sleep(10)
 
+            logging.info(f"YT Agent collected {len(recommendations)} recommendations.")
             return recommendations
         except Exception as e:
             logging.error(f"An error occurred during agent execution: {e}", exc_info=True)

@@ -50,12 +50,18 @@ def test_fetch_youtube_categories(mock_get):
 
 @patch('app.services.youtube_api_caller.call_youtube_api_multiple')
 def test_fetch_video_data_from_urls(mock_call_multiple):
-    urls = [
-        "https://www.youtube.com/watch?v=lV_QcwbTlZU",
-        "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    recommendations = [
+        {"url": "https://www.youtube.com/watch?v=lV_QcwbTlZU"},
+        {"url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"},
+        {"url": "https://www.youtube.com/watch?v=lV_QcwbTlZU"},  # Duplicate
     ]
-    youtube_api_caller.fetch_video_data_from_urls(urls)
-    mock_call_multiple.assert_called_once_with(["lV_QcwbTlZU", "dQw4w9WgXcQ"])
+    expected_video_ids = sorted(["lV_QcwbTlZU", "dQw4w9WgXcQ"])
+
+    mock_call_multiple.return_value = {"items": []}
+
+    youtube_api_caller.fetch_video_data_from_urls(recommendations)
+
+    mock_call_multiple.assert_called_once_with(expected_video_ids)
 
 @patch('app.services.youtube_api_caller.requests.get')
 def test_call_youtube_api_multiple_with_chunking(mock_get):

@@ -31,7 +31,7 @@ def test_process_and_insert_video_from_json(mock_upsert_video, mock_session):
         }
     }
 
-    process_and_insert_video_from_json(mock_session, video_json, iteration=1)
+    process_and_insert_video_from_json(mock_session, video_json)
 
     expected_video_data = {
         "video_id": "test_video_id",
@@ -47,7 +47,6 @@ def test_process_and_insert_video_from_json(mock_upsert_video, mock_session):
         "view_count": 100,
         "like_count": 10,
         "comment_count": 5,
-        "iteration": 1,
     }
 
     mock_upsert_video.assert_called_once_with(mock_session, expected_video_data)

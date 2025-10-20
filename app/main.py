@@ -1,9 +1,11 @@
 import logging
 import time
+import uuid
 
+from app.crud.rec_event import insert_rec_events
 from app.services.category_sync import sync_categories_from_youtube
 from app.services.video_processing import process_and_insert_video_from_json
-from app.services.youtube_api_caller import fetch_video_data_from_urls
+from app.services.youtube_api_caller import fetch_video_data_from_urls, get_video_id_from_url
 from app.services.yt_agent import run_yt_agent
 from app.db import get_session
 from app.services.exceptions import QuotaExceededError
@@ -32,6 +34,7 @@ def is_video_data_valid(video_data: dict) -> bool:
 
 def gather_recommendations_insert_into_db(session, videos_to_click: int = 3):
     logging.info(f"Starting new data gathering cycle with {videos_to_click} videos to click.")
+    run_id = uuid.uuid4()
 
     recommendations = run_yt_agent(headless=True, iterations=videos_to_click)
     if not recommendations:
@@ -45,6 +48,7 @@ def gather_recommendations_insert_into_db(session, videos_to_click: int = 3):
         return
 
     video_data_list = json_response['items']
+    logging.info(f"Received {len(video_data_list)} video data items from API.")
 
     valid_video_data = [data for data in video_data_list if is_video_data_valid(data)]
     if not valid_video_data:
@@ -53,8 +57,29 @@ def gather_recommendations_insert_into_db(session, videos_to_click: int = 3):
 
     logging.info(f"Found {len(valid_video_data)} valid videos to insert. Processing and inserting...")
     for video_data in valid_video_data:
-        process_and_insert_video_from_json(session, video_data)
-    logging.info("Completed processing and inserting video data into the database.")
+        try:
+            process_and_insert_video_from_json(session, video_data)
+        except Exception as e:
+            logging.error(f"Failed to process and insert video {video_data.get('id')}: {e}")
+
+    logging.info("Creating recommendation events...")
+    rec_events = [
+        {
+            "run_id": run_id,
+            "iteration": rec["iteration"],
+            "source_video_id": rec["source_video_id"],
+            "video_id": get_video_id_from_url(rec["url"]),
+            "position": rec["position"],
+        }
+        for rec in recommendations
+    ]
+
+    try:
+        insert_rec_events(session, rec_events)
+    except Exception as e:
+        logging.error(f"Failed to insert recommendation events: {e}")
+
+    logging.info(f"Completed processing and inserting {len(rec_events)} recommendation events into the database.")
 
 
 def main_loop(initial_wait_seconds: int = 5, error_wait_seconds: int = 60, quota_wait_hours: int = 6):
@@ -82,4 +107,3 @@ if __name__ == "__main__":
     with get_session() as session:
         sync_categories_from_youtube(session)
     main_loop()
-

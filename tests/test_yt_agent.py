@@ -52,8 +52,9 @@ def test_click_home(mock_playwright):
     yt_agent.click_home(mock_page)
     mock_locator.first.click.assert_called_once()
 
-def test_select_random_video(mock_playwright):
+def test_select_random_video_and_get_recommendations(mock_playwright):
     mock_page = mock_playwright["page"]
+    mock_page.url = "https://www.youtube.com/watch?v=source_vid1"
     mock_videos_locator = MagicMock()
     mock_page.locator.return_value = mock_videos_locator
 
@@ -62,12 +63,16 @@ def test_select_random_video(mock_playwright):
     mock_videos_locator.evaluate_all.return_value = ['/watch?v=1', '/watch?v=2', '/watch?v=3']
 
 
-    with patch('app.services.yt_agent.random.choice', return_value=1) as mock_random_choice:
-        yt_agent.select_random_video_and_get_recommendations(mock_page)
+    with patch('app.services.yt_agent.random.choice', return_value=1):
+        recommendations = yt_agent.select_random_video_and_get_recommendations(mock_page, iteration=5)
 
         mock_page.locator.assert_called_with("a.yt-lockup-metadata-view-model__title")
 
-        mock_random_choice.assert_called_once()
-
-        mock_videos_locator.nth.assert_any_call(1)
         mock_videos_locator.nth.return_value.click.assert_called_once()
+
+        assert len(recommendations) == 3
+        first_rec = recommendations[0]
+        assert first_rec['iteration'] == 5
+        assert first_rec['position'] == 0
+        assert first_rec['source_video_id'] == 'source_vid1'
+        assert 'url' in first_rec

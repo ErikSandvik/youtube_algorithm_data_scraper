@@ -20,6 +20,7 @@ if dotenv_path.exists():
 from app.models.base import Base
 import app.models.video  # noqa: F401
 import app.models.category  # noqa: F401
+import app.models.rec_event  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:

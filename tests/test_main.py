@@ -8,10 +8,17 @@ from app.models.video import Video
 from app.models.category import Category
 from app.db import engine as app_engine
 
-MOCK_VIDEO_URLS = ["https://www.youtube.com/watch?v=test_video_id"]
+MOCK_RECOMMENDATIONS = [
+    {
+        "url": "https://www.youtube.com/watch?v=test_vid_id",
+        "iteration": 1,
+        "source_video_id": "source_id",
+        "position": 0,
+    }
+]
 MOCK_API_RESPONSE = {
     'items': [{
-        'id': 'test_video_id',
+        'id': 'test_vid_id',
         'snippet': {
             'publishedAt': '2025-10-19T21:00:00Z',
             'channelId': 'test_channel_id',
@@ -33,7 +40,7 @@ class TestMainIntegration(unittest.TestCase):
 
     def setUp(self):
         self.session = self.Session()
-        self.session.query(Video).filter(Video.video_id == 'test_video_id').delete()
+        self.session.query(Video).filter(Video.video_id == 'test_vid_id').delete()
         self.session.query(Category).filter(Category.id == 28).delete()
         self.session.commit()
 
@@ -41,28 +48,34 @@ class TestMainIntegration(unittest.TestCase):
         self.session.commit()
 
     def tearDown(self):
-        self.session.query(Video).filter(Video.video_id == 'test_video_id').delete()
+        self.session.query(Video).filter(Video.video_id == 'test_vid_id').delete()
         self.session.query(Category).filter(Category.id == 28).delete()
         self.session.commit()
         self.session.close()
 
+    @patch('app.main.insert_rec_events')
     @patch('app.main.process_and_insert_video_from_json')
     @patch('app.main.fetch_video_data_from_urls')
     @patch('app.main.run_yt_agent')
     def test_gather_recommendations_successful_run(
-        self, mock_run_yt_agent, mock_fetch_data, mock_process_insert
+        self, mock_run_yt_agent, mock_fetch_data, mock_process_insert, mock_insert_events
     ):
-        mock_run_yt_agent.return_value = MOCK_VIDEO_URLS
+        mock_run_yt_agent.return_value = MOCK_RECOMMENDATIONS
         mock_fetch_data.return_value = MOCK_API_RESPONSE
 
         gather_recommendations_insert_into_db(self.session, videos_to_click=1)
 
         mock_run_yt_agent.assert_called_once_with(headless=True, iterations=1)
-        mock_fetch_data.assert_called_once_with(MOCK_VIDEO_URLS)
+        mock_fetch_data.assert_called_once_with(MOCK_RECOMMENDATIONS)
 
         mock_process_insert.assert_called_once()
         call_args = mock_process_insert.call_args[0]
-        self.assertEqual(call_args[1]['id'], 'test_video_id')
+        self.assertEqual(call_args[1]['id'], 'test_vid_id')
+
+        mock_insert_events.assert_called_once()
+        events_call_args = mock_insert_events.call_args[0]
+        self.assertEqual(len(events_call_args[1]), 1)
+        self.assertEqual(events_call_args[1][0]["video_id"], "test_vid_id")
 
     def test_is_video_data_valid(self):
         self.assertTrue(is_video_data_valid(MOCK_API_RESPONSE['items'][0]))

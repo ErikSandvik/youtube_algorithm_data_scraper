@@ -1,5 +1,6 @@
 import os
 import requests
+import logging
 from dotenv import load_dotenv
 
 from app.services.exceptions import QuotaExceededError
@@ -8,7 +9,7 @@ load_dotenv()
 API_KEY = os.getenv("YT_API_KEY")
 
 def get_video_id_from_url(video_url: str) -> str:
-    return video_url[-11:]
+    return video_url.split("v=")[-1][:11]
 
 def get_video_ids_from_urls(video_urls: list) -> list:
     return [get_video_id_from_url(url) for url in video_urls]
@@ -62,9 +63,13 @@ def fetch_youtube_categories() -> dict:
     _handle_api_response(response)
     return response.json()
 
-def fetch_video_data_from_urls(video_urls: list) -> dict:
+def fetch_video_data_from_urls(recommendations: list[dict]) -> dict:
+    video_urls = [rec["url"] for rec in recommendations]
     video_ids = get_video_ids_from_urls(video_urls)
-    return call_youtube_api_multiple(video_ids)
+    unique_video_ids = sorted(list(set(video_ids)))
+    logging.info(f"Fetching data for {len(unique_video_ids)} unique video IDs from API.")
+    return call_youtube_api_multiple(unique_video_ids)
+
 
 if __name__ == "__main__":
     sample_video_url = "https://www.youtube.com/watch?v=lV_QcwbTlZU"

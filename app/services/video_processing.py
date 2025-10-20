@@ -9,7 +9,7 @@ from app.crud.video import upsert_video
 logger = logging.getLogger(__name__)
 
 
-def process_and_insert_video_from_json(session: Session, video_json_item: Dict[str, Any], iteration: int = 0):
+def process_and_insert_video_from_json(session: Session, video_json_item: Dict[str, Any]):
     if not video_json_item:
         logger.warning("Received empty video JSON, skipping.")
         return
@@ -32,7 +32,6 @@ def process_and_insert_video_from_json(session: Session, video_json_item: Dict[s
         "view_count": int(statistics["viewCount"]) if statistics.get("viewCount") else 0,
         "like_count": int(statistics["likeCount"]) if statistics.get("likeCount") else 0,
         "comment_count": int(statistics["commentCount"]) if statistics.get("commentCount") else 0,
-        "iteration": iteration,
     }
 
     try:

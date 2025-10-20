@@ -61,26 +61,23 @@ class TestDatabaseOperations(unittest.TestCase):
         cls.session_context.__exit__(None, None, None)
 
     def test_1_video_creation(self):
-        process_and_insert_video_from_json(self.session, self.video_item, iteration=1)
+        process_and_insert_video_from_json(self.session, self.video_item)
         retrieved_video = get_video_by_id(self.session, self.video_id)
 
         self.assertIsNotNone(retrieved_video)
         self.assertEqual(retrieved_video.title, self.video_item['snippet']['title'])
-        self.assertEqual(retrieved_video.iteration, 1)
 
     def test_2_video_update(self):
         update_item = self.video_item.copy()
         updated_title = "My Updated Test Video"
         update_item['snippet']['title'] = updated_title
 
-        process_and_insert_video_from_json(self.session, update_item, iteration=2)
+        process_and_insert_video_from_json(self.session, update_item)
         updated_video = get_video_by_id(self.session, self.video_id)
 
         self.assertIsNotNone(updated_video)
         self.assertEqual(updated_video.title, updated_title)
-        self.assertEqual(updated_video.iteration, 2)
 
 
 if __name__ == "__main__":
     unittest.main()
-
