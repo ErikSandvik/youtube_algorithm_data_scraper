@@ -32,11 +32,11 @@ def is_video_data_valid(video_data: dict) -> bool:
     return True
 
 
-def gather_recommendations_insert_into_db(session, videos_to_click: int = 3):
+def gather_recommendations_insert_into_db(session, videos_to_click: int = 3, headless: bool = True):
     logging.info(f"Starting new data gathering cycle with {videos_to_click} videos to click.")
     run_id = uuid.uuid4()
 
-    recommendations = run_yt_agent(headless=True, iterations=videos_to_click)
+    recommendations = run_yt_agent(headless, iterations=videos_to_click)
     if not recommendations:
         logging.warning("No recommendations were gathered from the agent. Skipping this cycle.")
         return
@@ -82,7 +82,7 @@ def gather_recommendations_insert_into_db(session, videos_to_click: int = 3):
     logging.info(f"Completed processing and inserting {len(rec_events)} recommendation events into the database.")
 
 
-def main_loop(initial_wait_seconds: int = 5, error_wait_seconds: int = 60, quota_wait_hours: int = 6):
+def main_loop(initial_wait_seconds: int = 5, error_wait_seconds: int = 60, quota_wait_hours: int = 6, headless: bool = True):
     logging.info("--- Starting Main Application Loop ---")
     time.sleep(initial_wait_seconds)
     quota_wait_seconds = quota_wait_hours * 3600
@@ -90,7 +90,7 @@ def main_loop(initial_wait_seconds: int = 5, error_wait_seconds: int = 60, quota
     while True:
         try:
             with get_session() as session:
-                gather_recommendations_insert_into_db(session, videos_to_click=10)
+                gather_recommendations_insert_into_db(session, videos_to_click=30, headless=headless)
             logging.info(f"Cycle finished. Waiting for {error_wait_seconds} seconds before next run.")
             time.sleep(error_wait_seconds)
         except QuotaExceededError as e:
@@ -106,4 +106,4 @@ def main_loop(initial_wait_seconds: int = 5, error_wait_seconds: int = 60, quota
 if __name__ == "__main__":
     with get_session() as session:
         sync_categories_from_youtube(session)
-    main_loop()
+    main_loop(headless=True)
