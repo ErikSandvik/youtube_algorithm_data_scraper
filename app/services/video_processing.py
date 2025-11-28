@@ -17,6 +17,7 @@ def process_and_insert_video_from_json(session: Session, video_json_item: Dict[s
     snippet = video_json_item.get("snippet", {})
     content_details = video_json_item.get("contentDetails", {})
     statistics = video_json_item.get("statistics", {})
+    topic_details = video_json_item.get("topicDetails", {})
 
     video_data = {
         "video_id": video_json_item.get("id"),
@@ -25,6 +26,7 @@ def process_and_insert_video_from_json(session: Session, video_json_item: Dict[s
         "channel_id": snippet.get("channelId"),
         "channel_title": snippet.get("channelTitle"),
         "tags": snippet.get("tags"),
+        "topic_categories": topic_details.get("topicCategories"),
         "category_id": int(snippet["categoryId"]) if snippet.get("categoryId") else None,
         "published_at": datetime.fromisoformat(snippet["publishedAt"].replace("Z", "+00:00")) if snippet.get("publishedAt") else None,
         "language": snippet.get("defaultLanguage") or snippet.get("defaultAudioLanguage"),

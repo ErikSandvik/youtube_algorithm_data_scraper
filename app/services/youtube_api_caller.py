@@ -26,7 +26,7 @@ def _handle_api_response(response: requests.Response):
 def fetch_video_data(video_id: str) -> dict:
     api_url = (
         f"https://www.googleapis.com/youtube/v3/videos"
-        f"?part=snippet,contentDetails,statistics"
+        f"?part=snippet,contentDetails,statistics,topicDetails"
         f"&id={video_id}"
         f"&key={API_KEY}"
     )
@@ -41,7 +41,7 @@ def call_youtube_api_multiple(video_ids: list) -> dict:
         ids_string = ",".join(chunk)
         api_url = (
             f"https://www.googleapis.com/youtube/v3/videos"
-            f"?part=snippet,contentDetails,statistics"
+            f"?part=snippet,contentDetails,statistics,topicDetails"
             f"&id={ids_string}"
             f"&key={API_KEY}"
         )
@@ -51,6 +51,26 @@ def call_youtube_api_multiple(video_ids: list) -> dict:
         all_items.extend(data.get('items', []))
 
     return {'items': all_items}
+
+
+def fetch_channel_details(channel_ids: list) -> dict:
+    all_items = []
+    for i in range(0, len(channel_ids), 50):
+        chunk = channel_ids[i:i + 50]
+        ids_string = ",".join(chunk)
+        api_url = (
+            f"https://www.googleapis.com/youtube/v3/channels"
+            f"?part=snippet,topicDetails,statistics"
+            f"&id={ids_string}"
+            f"&key={API_KEY}"
+        )
+        response = requests.get(api_url)
+        _handle_api_response(response)
+        data = response.json()
+        all_items.extend(data.get('items', []))
+
+    return {'items': all_items}
+
 
 def fetch_youtube_categories() -> dict:
     api_url = (

@@ -28,6 +28,12 @@ def test_process_and_insert_video_from_json(mock_upsert_video, mock_session):
             "viewCount": "100",
             "likeCount": "10",
             "commentCount": "5"
+        },
+        "topicDetails": {
+            "topicCategories": [
+                "https://en.wikipedia.org/wiki/Music",
+                "https://en.wikipedia.org/wiki/Pop_music"
+            ]
         }
     }
 
@@ -40,6 +46,10 @@ def test_process_and_insert_video_from_json(mock_upsert_video, mock_session):
         "channel_id": "test_channel_id",
         "channel_title": "Test Channel Title",
         "tags": ["tag1", "tag2"],
+        "topic_categories": [
+            "https://en.wikipedia.org/wiki/Music",
+            "https://en.wikipedia.org/wiki/Pop_music"
+        ],
         "category_id": 25,
         "published_at": datetime(2025, 10, 18, 22, 0, 0, tzinfo=timezone.utc),
         "language": "en",

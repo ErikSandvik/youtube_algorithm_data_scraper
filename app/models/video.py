@@ -19,11 +19,14 @@ class Video(Base):
     iteration: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     # Channel info
-    channel_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    channel_id: Mapped[str] = mapped_column(String(64), ForeignKey("channels.channel_id"), nullable=False)
     channel_title: Mapped[str | None] = mapped_column(String(300), nullable=True)
 
     # Tags (JSON array)
     tags: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
+
+    # Topic categories from YouTube API
+    topic_categories: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
 
     # Category & timestamps
     category_id: Mapped[int | None] = mapped_column(ForeignKey("categories.id"), nullable=True)

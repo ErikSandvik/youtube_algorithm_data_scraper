@@ -5,6 +5,7 @@ import uuid
 from app.crud.rec_event import insert_rec_events
 from app.services.category_sync import sync_categories_from_youtube
 from app.services.video_processing import process_and_insert_video_from_json
+from app.services.channel_processing import process_and_insert_channels_from_videos
 from app.services.youtube_api_caller import fetch_video_data_from_urls, get_video_id_from_url
 from app.services.yt_agent import run_yt_agent
 from app.db import get_session
@@ -54,6 +55,13 @@ def gather_recommendations_insert_into_db(session, videos_to_click: int = 3, hea
     if not valid_video_data:
         logging.warning("No valid video data found after validation. Skipping insertion.")
         return
+    
+    logging.info("Processing and inserting channels for videos...")
+    try:
+        process_and_insert_channels_from_videos(session, valid_video_data)
+    except Exception as e:
+        logging.error(f"Failed to process channels: {e}")
+
 
     logging.info(f"Found {len(valid_video_data)} valid videos to insert. Processing and inserting...")
     for video_data in valid_video_data:
