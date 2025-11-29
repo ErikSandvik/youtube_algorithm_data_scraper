@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PoliticalKeywords>
+
+    <!-- ============================== -->
+    <!-- English (EN)                   -->
+    <!-- ============================== -->
+    <Language code="en">
+        <Keyword>politics</Keyword>
+        <Keyword>political</Keyword>
+        <Keyword>election</Keyword>
+        <Keyword>elections</Keyword>
+        <Keyword>electoral</Keyword>
+        <Keyword>campaign</Keyword>
+        <Keyword>campaigns</Keyword>
+        <Keyword>vote</Keyword>
+        <Keyword>voting</Keyword>
+        <Keyword>voter</Keyword>
+        <Keyword>voters</Keyword>
+
+        <Keyword>government</Keyword>
+        <Keyword>governance</Keyword>
+        <Keyword>parliament</Keyword>
+        <Keyword>congress</Keyword>
+        <Keyword>senate</Keyword>
+        <Keyword>senator</Keyword>
+        <Keyword>representative</Keyword>
+        <Keyword>minister</Keyword>
+        <Keyword>prime minister</Keyword>
+        <Keyword>cabinet</Keyword>
+        <Keyword>administration</Keyword>
+
+        <Keyword>policy</Keyword>
+        <Keyword>policies</Keyword>
+        <Keyword>public policy</Keyword>
+        <Keyword>legislation</Keyword>
+        <Keyword>legislative</Keyword>
+        <Keyword>constitution</Keyword>
+        <Keyword>constitutional</Keyword>
+        <Keyword>amendment</Keyword>
+
+        <Keyword>republican</Keyword>
+        <Keyword>republicans</Keyword>
+        <Keyword>democrat</Keyword>
+        <Keyword>democrats</Keyword>
+        <Keyword>conservative</Keyword>
+        <Keyword>liberal</Keyword>
+        <Keyword>left wing</Keyword>
+        <Keyword>right wing</Keyword>
+        <Keyword>far right</Keyword>
+        <Keyword>far-left</Keyword>
+        <Keyword>political party</Keyword>
+
+        <Keyword>alt-right</Keyword>
+        <Keyword>alt right</Keyword>
+        <Keyword>alt-lite</Keyword>
+        <Keyword>white nationalist</Keyword>
+        <Keyword>white nationalism</Keyword>
+        <Keyword>white supremacist</Keyword>
+        <Keyword>white supremacy</Keyword>
+        <Keyword>white genocide</Keyword>
+        <Keyword>great replacement</Keyword>
+        <Keyword>race realism</Keyword>
+        <Keyword>civic nationalism</Keyword>
+        <Keyword>Judeo-Christian</Keyword>
+
+        <Keyword>immigration</Keyword>
+        <Keyword>border security</Keyword>
+        <Keyword>asylum</Keyword>
+        <Keyword>refugee</Keyword>
+        <Keyword>deportation</Keyword>
+        <Keyword>visa</Keyword>
+
+        <Keyword>gun control</Keyword>
+        <Keyword>firearm regulation</Keyword>
+
+        <Keyword>healthcare reform</Keyword>
+        <Keyword>affordable care act</Keyword>
+        <Keyword>obamacare</Keyword>
+
+        <Keyword>free speech</Keyword>
+        <Keyword>freedom of speech</Keyword>
+        <Keyword>political correctness</Keyword>
+        <Keyword>pc culture</Keyword>
+        <Keyword>culture wars</Keyword>
+        <Keyword>identity politics</Keyword>
+        <Keyword>hate speech</Keyword>
+
+        <Keyword>extremist</Keyword>
+        <Keyword>extremism</Keyword>
+        <Keyword>radicalization</Keyword>
+        <Keyword>radicalize</Keyword>
+        <Keyword>anti-semitism</Keyword>
+        <Keyword>antisemitic</Keyword>
+        <Keyword>conspiracy theory</Keyword>
+
+        <Keyword>sanctions</Keyword>
+        <Keyword>treaty</Keyword>
+        <Keyword>trade agreement</Keyword>
+        <Keyword>trade war</Keyword>
+        <Keyword>military intervention</Keyword>
+        <Keyword>no-fly zone</Keyword>
+        <Keyword>nuclear program</Keyword>
+
+        <Keyword>feminism</Keyword>
+        <Keyword>feminist</Keyword>
+        <Keyword>anti-feminist</Keyword>
+        <Keyword>social justice</Keyword>
+
+        <Keyword>political commentary</Keyword>
+        <Keyword>political debate</Keyword>
+        <Keyword>political content</Keyword>
+        <Keyword>political channel</Keyword>
+        <Keyword>political youtuber</Keyword>
+    </Language>
+
+    <!-- ============================== -->
+    <!-- Norwegian (NO)                 -->
+    <!-- ============================== -->
+    <Language code="no">
+        <Keyword>politikk</Keyword>
+        <Keyword>politisk</Keyword>
+        <Keyword>valg</Keyword>
+        <Keyword>valget</Keyword>
+        <Keyword>valgkamp</Keyword>
+        <Keyword>stemmegivning</Keyword>
+        <Keyword>velger</Keyword>
+        <Keyword>velgere</Keyword>
+
+        <Keyword>regjering</Keyword>
+        <Keyword>stortinget</Keyword>
+        <Keyword>parlament</Keyword>
+        <Keyword>minister</Keyword>
+        <Keyword>statsminister</Keyword>
+        <Keyword>departement</Keyword>
+
+        <Keyword>politikk</Keyword>
+        <Keyword>offentlig politikk</Keyword>
+        <Keyword>lovgivning</Keyword>
+        <Keyword>grunnlov</Keyword>
+        <Keyword>grunnlovsendring</Keyword>
+
+        <Keyword>høyresiden</Keyword>
+        <Keyword>venstresiden</Keyword>
+        <Keyword>ytterste høyre</Keyword>
+
+        <Keyword>hvit nasjonalisme</Keyword>
+        <Keyword>hvit overlegenhet</Keyword>
+        <Keyword>hvit makt</Keyword>
+        <Keyword>den store utskiftningen</Keyword>
+
+        <Keyword>innvandring</Keyword>
+        <Keyword>grensekontroll</Keyword>
+        <Keyword>asyl</Keyword>
+        <Keyword>flyktning</Keyword>
+        <Keyword>deportasjon</Keyword>
+        <Keyword>visum</Keyword>
+
+        <Keyword>våpenkontroll</Keyword>
+
+        <Keyword>helsepolitikk</Keyword>
+        <Keyword>ytringsfrihet</Keyword>
+        <Keyword>politisk korrekthet</Keyword>
+        <Keyword>kulturkrig</Keyword>
+        <Keyword>identitetspolitikk</Keyword>
+        <Keyword>hatprat</Keyword>
+
+        <Keyword>ekstremisme</Keyword>
+        <Keyword>radikalisering</Keyword>
+        <Keyword>antisemittisme</Keyword>
+        <Keyword>konspirasjonsteori</Keyword>
+
+        <Keyword>sanksjoner</Keyword>
+        <Keyword>traktat</Keyword>
+        <Keyword>handelsavtale</Keyword>
+        <Keyword>handelskrig</Keyword>
+        <Keyword>militær intervensjon</Keyword>
+        <Keyword>flyforbudssone</Keyword>
+        <Keyword>atomprogram</Keyword>
+
+        <Keyword>feminisme</Keyword>
+        <Keyword>feminist</Keyword>
+        <Keyword>antifeminist</Keyword>
+        <Keyword>sosial rettferdighet</Keyword>
+
+        <Keyword>politisk debatt</Keyword>
+        <Keyword>politisk kommentar</Keyword>
+        <Keyword>politisk innhold</Keyword>
+        <Keyword>politisk kanal</Keyword>
+    </Language>
+
+    <!-- ============================== -->
+    <!-- Spanish (ES)                   -->
+    <!-- ============================== -->
+    <Language code="es">
+        <Keyword>política</Keyword>
+        <Keyword>electoral</Keyword>
+        <Keyword>elección</Keyword>
+        <Keyword>elecciones</Keyword>
+        <Keyword>campaña</Keyword>
+        <Keyword>votar</Keyword>
+        <Keyword>votante</Keyword>
+
+        <Keyword>gobierno</Keyword>
+        <Keyword>parlamento</Keyword>
+        <Keyword>congreso</Keyword>
+        <Keyword>senado</Keyword>
+        <Keyword>ministro</Keyword>
+        <Keyword>primer ministro</Keyword>
+
+        <Keyword>política pública</Keyword>
+        <Keyword>legislación</Keyword>
+        <Keyword>constitución</Keyword>
+        <Keyword>enmendar</Keyword>
+
+        <Keyword>izquierda</Keyword>
+        <Keyword>derecha</Keyword>
+        <Keyword>extrema derecha</Keyword>
+
+        <Keyword>nacionalismo blanco</Keyword>
+        <Keyword>supremacía blanca</Keyword>
+        <Keyword>gran reemplazo</Keyword>
+
+        <Keyword>inmigración</Keyword>
+        <Keyword>seguridad fronteriza</Keyword>
+        <Keyword>asilo</Keyword>
+        <Keyword>refugiado</Keyword>
+        <Keyword>deportación</Keyword>
+        <Keyword>visa</Keyword>
+
+        <Keyword>control de armas</Keyword>
+
+        <Keyword>libertad de expresión</Keyword>
+        <Keyword>corrección política</Keyword>
+        <Keyword>guerras culturales</Keyword>
+        <Keyword>política de identidad</Keyword>
+        <Keyword>discurso de odio</Keyword>
+
+        <Keyword>extremismo</Keyword>
+        <Keyword>radicalización</Keyword>
+        <Keyword>antisemitismo</Keyword>
+        <Keyword>teoría de conspiración</Keyword>
+
+        <Keyword>sanciones</Keyword>
+        <Keyword>tratado</Keyword>
+        <Keyword>acuerdo comercial</Keyword>
+        <Keyword>guerra comercial</Keyword>
+        <Keyword>intervención militar</Keyword>
+        <Keyword>zona de exclusión aérea</Keyword>
+        <Keyword>programa nuclear</Keyword>
+
+        <Keyword>feminismo</Keyword>
+        <Keyword>feminista</Keyword>
+        <Keyword>antifeminista</Keyword>
+        <Keyword>justicia social</Keyword>
+
+        <Keyword>debate político</Keyword>
+        <Keyword>comentario político</Keyword>
+        <Keyword>contenido político</Keyword>
+    </Language>
+
+    <!-- ============================== -->
+    <!-- Russian (RU)                   -->
+    <!-- ============================== -->
+    <Language code="ru">
+        <Keyword>политика</Keyword>
+        <Keyword>политический</Keyword>
+        <Keyword>выборы</Keyword>
+        <Keyword>избирательный</Keyword>
+        <Keyword>кампания</Keyword>
+        <Keyword>голосование</Keyword>
+        <Keyword>избиратель</Keyword>
+
+        <Keyword>правительство</Keyword>
+        <Keyword>парламент</Keyword>
+        <Keyword>дума</Keyword>
+        <Keyword>сенат</Keyword>
+        <Keyword>министр</Keyword>
+
+        <Keyword>законодательство</Keyword>
+        <Keyword>конституция</Keyword>
+        <Keyword>поправка</Keyword>
+
+        <Keyword>правые</Keyword>
+        <Keyword>крайне правые</Keyword>
+
+        <Keyword>белый национализм</Keyword>
+        <Keyword>белое превосходство</Keyword>
+        <Keyword>великое замещение</Keyword>
+
+        <Keyword>иммиграция</Keyword>
+        <Keyword>граница</Keyword>
+        <Keyword>политическое убежище</Keyword>
+        <Keyword>беженец</Keyword>
+        <Keyword>депортация</Keyword>
+        <Keyword>виза</Keyword>
+
+        <Keyword>контроль над оружием</Keyword>
+
+        <Keyword>свобода слова</Keyword>
+        <Keyword>политкорректность</Keyword>
+        <Keyword>культурные войны</Keyword>
+        <Keyword>идентичная политика</Keyword>
+        <Keyword>язык ненависти</Keyword>
+
+        <Keyword>экстремизм</Keyword>
+        <Keyword>радикализация</Keyword>
+        <Keyword>антисемитизм</Keyword>
+        <Keyword>теория заговора</Keyword>
+
+        <Keyword>санкции</Keyword>
+        <Keyword>договор</Keyword>
+        <Keyword>торговое соглашение</Keyword>
+        <Keyword>торговая война</Keyword>
+        <Keyword>военная интервенция</Keyword>
+        <Keyword>бесполётная зона</Keyword>
+        <Keyword>ядерная программа</Keyword>
+
+        <Keyword>феминизм</Keyword>
+        <Keyword>феминистка</Keyword>
+        <Keyword>антифеминизм</Keyword>
+        <Keyword>социальная справедливость</Keyword>
+
+        <Keyword>политические дебаты</Keyword>
+        <Keyword>политический комментарий</Keyword>
+        <Keyword>политический контент</Keyword>
+    </Language>
+
+    <!-- ============================== -->
+    <!-- Hindi (HI)                     -->
+    <!-- ============================== -->
+    <Language code="hi">
+        <Keyword>राजनीति</Keyword>
+        <Keyword>राजनीतिक</Keyword>
+        <Keyword>चुनाव</Keyword>
+        <Keyword>मतदान</Keyword>
+        <Keyword>मतदाता</Keyword>
+
+        <Keyword>सरकार</Keyword>
+        <Keyword>संसद</Keyword>
+        <Keyword>मंत्रालय</Keyword>
+        <Keyword>प्रधान मंत्री</Keyword>
+
+        <Keyword>विधेयक</Keyword>
+        <Keyword>विधि</Keyword>
+        <Keyword>संविधान</Keyword>
+
+        <Keyword>दक्षिणपंथ</Keyword>
+        <Keyword>अति-दक्षिणपंथ</Keyword>
+
+        <Keyword>श्वेत वर्चस्व</Keyword>
+        <Keyword>श्वेत राष्ट्रवाद</Keyword>
+        <Keyword>महान प्रतिस्थापन</Keyword>
+
+        <Keyword>आव्रजन</Keyword>
+        <Keyword>सीमा सुरक्षा</Keyword>
+        <Keyword>आश्रय</Keyword>
+        <Keyword>शरणार्थी</Keyword>
+        <Keyword>निर्वासन</Keyword>
+        <Keyword>वीजा</Keyword>
+
+        <Keyword>हथियार नियंत्रण</Keyword>
+
+        <Keyword>अभिव्यक्ति की स्वतंत्रता</Keyword>
+        <Keyword>राजनीतिक शुद्धता</Keyword>
+        <Keyword>सांस्कृतिक युद्ध</Keyword>
+        <Keyword>पहचान राजनीति</Keyword>
+        <Keyword>घृणा भाषण</Keyword>
+
+        <Keyword>उग्रवाद</Keyword>
+        <Keyword>कट्टरपंथ</Keyword>
+        <Keyword>यहूदी-विरोध</Keyword>
+        <Keyword>षड्यंत्र सिद्धांत</Keyword>
+
+        <Keyword>प्रतिबंध</Keyword>
+        <Keyword>संविदा</Keyword>
+        <Keyword>व्यापार समझौता</Keyword>
+        <Keyword>व्यापार युद्ध</Keyword>
+        <Keyword>सैन्य हस्तक्षेप</Keyword>
+        <Keyword>नो-फ्लाई ज़ोन</Keyword>
+        <Keyword>परमाणु कार्यक्रम</Keyword>
+
+        <Keyword>नारीवाद</Keyword>
+        <Keyword>नारीवादी</Keyword>
+        <Keyword>विरोधी नारीवाद</Keyword>
+        <Keyword>सामाजिक न्याय</Keyword>
+
+        <Keyword>राजनीतिक बहस</Keyword>
+        <Keyword>राजनीतिक टिप्पणी</Keyword>
+        <Keyword>राजनीतिक सामग्री</Keyword>
+    </Language>
+
+</PoliticalKeywords>
