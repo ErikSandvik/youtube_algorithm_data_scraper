@@ -8,29 +8,19 @@ from typing import Dict
 logger = logging.getLogger(__name__)
 
 
-# Set style
 sns.set_style("whitegrid")
 sns.set_palette("Set2")
 
 
 def setup_output_dir(output_dir: str = "analysis/outputs") -> Path:
-    """Create output directory for figures and tables."""
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
     return output_path
 
 
 def plot_overall_exposure(metrics: Dict, output_dir: Path):
-    """
-    Create a simple bar chart showing overall political exposure.
-
-    Args:
-        metrics: Dictionary with overall metrics
-        output_dir: Directory to save figure
-    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
-    # Plot 1: Political vs Non-Political
     categories = ['Non-Political', 'Political']
     values = [
         metrics['total_recommendations'] - metrics['political_recommendations'],
@@ -38,13 +28,11 @@ def plot_overall_exposure(metrics: Dict, output_dir: Path):
     ]
     colors = ['#3498db', '#e74c3c']
 
-    bars = ax1.bar(categories, values, color=colors, alpha=0.7, edgecolor='black')
+    ax1.bar(categories, values, color=colors, alpha=0.7, edgecolor='black')
 
-    # Add percentage labels
-    for bar, val in zip(bars, values):
-        height = bar.get_height()
+    for i, val in enumerate(values):
         pct = (val / metrics['total_recommendations']) * 100
-        ax1.text(bar.get_x() + bar.get_width()/2., height,
+        ax1.text(i, val,
                 f'{val:,}\n({pct:.1f}%)',
                 ha='center', va='bottom', fontsize=12, fontweight='bold')
 
@@ -52,19 +40,16 @@ def plot_overall_exposure(metrics: Dict, output_dir: Path):
     ax1.set_title('Political vs Non-Political Content', fontsize=13, fontweight='bold')
     ax1.set_ylim(0, max(values) * 1.15)
 
-    # Plot 2: Political Content Depth
     depth_labels = ['Median Depth', 'Mean Depth']
     depth_values = [
         metrics.get('median_political_depth', 0),
         metrics.get('mean_political_depth', 0)
     ]
 
-    bars2 = ax2.bar(depth_labels, depth_values, color='#e74c3c', alpha=0.7, edgecolor='black')
+    ax2.bar(depth_labels, depth_values, color='#e74c3c', alpha=0.7, edgecolor='black')
 
-    # Add value labels
-    for bar, val in zip(bars2, depth_values):
-        height = bar.get_height()
-        ax2.text(bar.get_x() + bar.get_width()/2., height,
+    for i, val in enumerate(depth_values):
+        ax2.text(i, val,
                 f'{val:.2f}',
                 ha='center', va='bottom', fontsize=12, fontweight='bold')
 
@@ -80,16 +65,8 @@ def plot_overall_exposure(metrics: Dict, output_dir: Path):
 
 
 def plot_exposure_by_iteration(df_iteration: pd.DataFrame, output_dir: Path):
-    """
-    Plot political exposure rate across iterations (crawl depth).
-
-    Args:
-        df_iteration: DataFrame with iteration-level metrics
-        output_dir: Directory to save figure
-    """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
 
-    # Plot 1: Political percentage by iteration
     ax1.plot(df_iteration['iteration'], df_iteration['political_percentage'],
              marker='o', linewidth=2, markersize=8, color='#e74c3c')
     ax1.fill_between(df_iteration['iteration'], 0, df_iteration['political_percentage'],
@@ -100,7 +77,6 @@ def plot_exposure_by_iteration(df_iteration: pd.DataFrame, output_dir: Path):
     ax1.grid(True, alpha=0.3)
     ax1.set_xticks(df_iteration['iteration'])
 
-    # Plot 2: Total recommendations by iteration
     ax2.bar(df_iteration['iteration'], df_iteration['total_recommendations'],
             color='#3498db', alpha=0.7, edgecolor='black')
     ax2.set_xlabel('Iteration (Crawl Depth)', fontsize=12)
@@ -115,20 +91,11 @@ def plot_exposure_by_iteration(df_iteration: pd.DataFrame, output_dir: Path):
 
 
 def plot_exposure_by_position(df_position: pd.DataFrame, output_dir: Path):
-    """
-    Plot political exposure by recommendation position/rank.
-
-    Args:
-        df_position: DataFrame with position-level metrics
-        output_dir: Directory to save figure
-    """
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Create bar plot
-    bars = ax.bar(df_position['position'], df_position['political_percentage'],
-                  color='#e74c3c', alpha=0.7, edgecolor='black')
+    ax.bar(df_position['position'], df_position['political_percentage'],
+            color='#e74c3c', alpha=0.7, edgecolor='black')
 
-    # Add mean line
     mean_pct = df_position['political_percentage'].mean()
     ax.axhline(y=mean_pct, color='#2c3e50', linestyle='--', linewidth=2,
                label=f'Mean: {mean_pct:.1f}%')
@@ -146,26 +113,16 @@ def plot_exposure_by_position(df_position: pd.DataFrame, output_dir: Path):
 
 
 def plot_top_videos(df_videos: pd.DataFrame, output_dir: Path, top_n: int = 15):
-    """
-    Plot top political videos by recommendation frequency.
-
-    Args:
-        df_videos: DataFrame with video-level metrics
-        output_dir: Directory to save figure
-        top_n: Number of videos to show
-    """
     fig, ax = plt.subplots(figsize=(12, 8))
 
     df_plot = df_videos.head(top_n).copy()
 
-    # Truncate long titles
     df_plot['title_short'] = df_plot['title'].apply(
         lambda x: x[:60] + '...' if len(x) > 60 else x
     )
 
-    # Create horizontal bar chart
-    bars = ax.barh(range(len(df_plot)), df_plot['recommendation_count'],
-                   color='#e74c3c', alpha=0.7, edgecolor='black')
+    ax.barh(range(len(df_plot)), df_plot['recommendation_count'],
+            color='#e74c3c', alpha=0.7, edgecolor='black')
 
     ax.set_yticks(range(len(df_plot)))
     ax.set_yticklabels(df_plot['title_short'], fontsize=9)
@@ -181,21 +138,12 @@ def plot_top_videos(df_videos: pd.DataFrame, output_dir: Path, top_n: int = 15):
 
 
 def plot_top_channels(df_channels: pd.DataFrame, output_dir: Path, top_n: int = 15):
-    """
-    Plot top channels by political content recommendations.
-
-    Args:
-        df_channels: DataFrame with channel-level metrics
-        output_dir: Directory to save figure
-        top_n: Number of channels to show
-    """
     fig, ax = plt.subplots(figsize=(12, 8))
 
     df_plot = df_channels.head(top_n).copy()
 
-    # Create horizontal bar chart
-    bars = ax.barh(range(len(df_plot)), df_plot['total_recommendations'],
-                   color='#9b59b6', alpha=0.7, edgecolor='black')
+    ax.barh(range(len(df_plot)), df_plot['total_recommendations'],
+            color='#9b59b6', alpha=0.7, edgecolor='black')
 
     ax.set_yticks(range(len(df_plot)))
     ax.set_yticklabels(df_plot['channel_title'], fontsize=9)
@@ -211,25 +159,16 @@ def plot_top_channels(df_channels: pd.DataFrame, output_dir: Path, top_n: int = 
 
 
 def plot_run_comparison(df_runs: pd.DataFrame, output_dir: Path):
-    """
-    Compare political exposure across different crawl runs.
-
-    Args:
-        df_runs: DataFrame with run-level metrics
-        output_dir: Directory to save figure
-    """
     if len(df_runs) < 2:
         logger.info("Skipping run comparison (only 1 run found)")
         return
 
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    # Create bar plot
     x_pos = range(len(df_runs))
-    bars = ax.bar(x_pos, df_runs['political_percentage'],
-                  color='#e74c3c', alpha=0.7, edgecolor='black')
+    ax.bar(x_pos, df_runs['political_percentage'],
+           color='#e74c3c', alpha=0.7, edgecolor='black')
 
-    # Add labels
     ax.set_xlabel('Run ID', fontsize=12)
     ax.set_ylabel('Political Content (%)', fontsize=12)
     ax.set_title('Political Exposure Across Crawl Runs', fontsize=14, fontweight='bold')
@@ -237,7 +176,6 @@ def plot_run_comparison(df_runs: pd.DataFrame, output_dir: Path):
     ax.set_xticklabels([str(rid)[:8] + '...' for rid in df_runs['run_id']],
                        rotation=45, ha='right', fontsize=9)
 
-    # Add mean line
     mean_pct = df_runs['political_percentage'].mean()
     ax.axhline(y=mean_pct, color='#2c3e50', linestyle='--', linewidth=2,
                label=f'Mean: {mean_pct:.1f}%')
@@ -251,42 +189,30 @@ def plot_run_comparison(df_runs: pd.DataFrame, output_dir: Path):
 
 
 def export_tables(summary: Dict, output_dir: Path):
-    """
-    Export metric tables to CSV files for inclusion in papers.
-
-    Args:
-        summary: Dictionary with all metrics
-        output_dir: Directory to save tables
-    """
-    # Export iteration metrics
     summary['by_iteration'].to_csv(
         output_dir / 'table_iteration_metrics.csv',
         index=False
     )
     logger.info(f"Saved: table_iteration_metrics.csv")
 
-    # Export position metrics
     summary['by_position'].to_csv(
         output_dir / 'table_position_metrics.csv',
         index=False
     )
     logger.info(f"Saved: table_position_metrics.csv")
 
-    # Export top videos
     summary['top_videos'].to_csv(
         output_dir / 'table_top_political_videos.csv',
         index=False
     )
     logger.info(f"Saved: table_top_political_videos.csv")
 
-    # Export top channels
     summary['top_channels'].to_csv(
         output_dir / 'table_top_political_channels.csv',
         index=False
     )
     logger.info(f"Saved: table_top_political_channels.csv")
 
-    # Export overall metrics as a simple table
     overall_df = pd.DataFrame([summary['overall']])
     overall_df.to_csv(
         output_dir / 'table_overall_metrics.csv',
@@ -296,20 +222,13 @@ def export_tables(summary: Dict, output_dir: Path):
 
 
 def generate_all_visualizations(summary: Dict, output_dir: str = "analysis/outputs"):
-    """
-    Generate all figures and export all tables.
-
-    Args:
-        summary: Dictionary with all computed metrics
-        output_dir: Directory to save outputs
-    """
     output_path = setup_output_dir(output_dir)
 
     logger.info("\n" + "=" * 60)
     logger.info("GENERATING VISUALIZATIONS")
     logger.info("=" * 60 + "\n")
 
-    # Generate plots
+
     plot_overall_exposure(summary['overall'], output_path)
     plot_exposure_by_iteration(summary['by_iteration'], output_path)
     plot_exposure_by_position(summary['by_position'], output_path)
@@ -321,7 +240,7 @@ def generate_all_visualizations(summary: Dict, output_dir: str = "analysis/outpu
     logger.info("EXPORTING TABLES")
     logger.info("=" * 60 + "\n")
 
-    # Export tables
+
     export_tables(summary, output_path)
 
     logger.info("\n" + "=" * 60)
