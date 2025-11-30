@@ -94,5 +94,5 @@ pytest
 ## Notes
 
 - The application respects YouTube API quotas and will pause if quota is exceeded
-- Runs in headless mode by default for automated data collection
+- Runs in headless mode by default for automated data collection, this can be changed in the main script
 

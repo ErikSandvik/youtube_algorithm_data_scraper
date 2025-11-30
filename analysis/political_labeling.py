@@ -1,9 +1,13 @@
-"""Political content labeling for YouTube videos."""
 import pandas as pd
+import logging
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import List, Set
+
+logger = logging.getLogger(__name__)
+
+_POLITICAL_KEYWORDS = None
 
 
 def load_political_keywords_from_xml(xml_path: str = None) -> Set[str]:
@@ -24,11 +28,17 @@ def load_political_keywords_from_xml(xml_path: str = None) -> Set[str]:
             if keyword:
                 keywords.add(keyword.lower().strip())
 
-    print(f"Loaded {len(keywords)} political keywords from {xml_path}")
+    logger.info(f"Loaded {len(keywords)} political keywords from {xml_path}")
     return keywords
 
 
-POLITICAL_KEYWORDS = load_political_keywords_from_xml()
+def get_political_keywords() -> Set[str]:
+    """Get political keywords, loading them if not already loaded."""
+    global _POLITICAL_KEYWORDS
+    if _POLITICAL_KEYWORDS is None:
+        _POLITICAL_KEYWORDS = load_political_keywords_from_xml()
+    return _POLITICAL_KEYWORDS
+
 
 POLITICAL_TOPIC_URLS = {
     'https://en.wikipedia.org/wiki/Politics',
@@ -85,6 +95,9 @@ def has_political_topic(topic_categories) -> bool:
 def label_political_content(df: pd.DataFrame, min_signals: int = 2) -> pd.DataFrame:
     df = df.copy()
 
+    # Get keywords (lazy load)
+    keywords = get_political_keywords()
+
     # Signal 1: Category ID (News & Politics)
     df['signal_category'] = df['category_id'].isin(POLITICAL_CATEGORY_IDS)
 
@@ -99,12 +112,12 @@ def label_political_content(df: pd.DataFrame, min_signals: int = 2) -> pd.DataFr
 
     # Signal 4: Keywords in title
     df['signal_title'] = df['title'].apply(
-        lambda x: contains_political_keywords(x, POLITICAL_KEYWORDS)
+        lambda x: contains_political_keywords(x, keywords)
     )
 
     # Signal 5: Keywords in description
     df['signal_description'] = df['description'].apply(
-        lambda x: contains_political_keywords(x, POLITICAL_KEYWORDS)
+        lambda x: contains_political_keywords(x, keywords)
     )
 
     # Signal 6: Keywords in tags
@@ -121,7 +134,7 @@ def label_political_content(df: pd.DataFrame, min_signals: int = 2) -> pd.DataFr
             tags_text = str(tags)
             if not tags_text:
                 return False
-        return contains_political_keywords(tags_text, POLITICAL_KEYWORDS)
+        return contains_political_keywords(tags_text, keywords)
 
     df['signal_tags'] = df['tags'].apply(check_tags)
 
@@ -134,20 +147,20 @@ def label_political_content(df: pd.DataFrame, min_signals: int = 2) -> pd.DataFr
     df['is_political'] = df['signal_count'] >= min_signals
 
     # Print summary statistics
-    print(f"\nPolitical Content Labeling Results:")
-    print(f"Threshold: min_signals = {min_signals}")
-    print(f"Keywords loaded: {len(POLITICAL_KEYWORDS)}")
-    print(f"Total recommendations: {len(df):,}")
-    print(f"Political recommendations: {df['is_political'].sum():,} ({df['is_political'].mean()*100:.1f}%)")
-    print(f"\nSignal breakdown:")
-    print(f"  - Category (News & Politics): {df['signal_category'].sum():,}")
-    print(f"  - Topic categories: {df['signal_topic'].sum():,}")
-    print(f"  - Channel topics: {df['signal_channel_topic'].sum():,}")
-    print(f"  - Title keywords: {df['signal_title'].sum():,}")
-    print(f"  - Description keywords: {df['signal_description'].sum():,}")
-    print(f"  - Tag keywords: {df['signal_tags'].sum():,}")
-    print(f"\nSignal count distribution:")
-    print(df['signal_count'].value_counts().sort_index().to_string())
+    logger.info(f"\nPolitical Content Labeling Results:")
+    logger.info(f"Threshold: min_signals = {min_signals}")
+    logger.info(f"Keywords loaded: {len(keywords)}")
+    logger.info(f"Total recommendations: {len(df):,}")
+    logger.info(f"Political recommendations: {df['is_political'].sum():,} ({df['is_political'].mean()*100:.1f}%)")
+    logger.info(f"\nSignal breakdown:")
+    logger.info(f"  - Category (News & Politics): {df['signal_category'].sum():,}")
+    logger.info(f"  - Topic categories: {df['signal_topic'].sum():,}")
+    logger.info(f"  - Channel topics: {df['signal_channel_topic'].sum():,}")
+    logger.info(f"  - Title keywords: {df['signal_title'].sum():,}")
+    logger.info(f"  - Description keywords: {df['signal_description'].sum():,}")
+    logger.info(f"  - Tag keywords: {df['signal_tags'].sum():,}")
+    logger.info(f"\nSignal count distribution:")
+    logger.info(f"\n{df['signal_count'].value_counts().sort_index().to_string()}")
 
     return df
 
@@ -164,11 +177,11 @@ def add_custom_political_labels(df: pd.DataFrame,
 
     if channel_ids:
         df.loc[df['channel_id'].isin(channel_ids), 'is_political'] = True
-        print(f"Manually labeled {len(channel_ids)} channels as political")
+        logger.info(f"Manually labeled {len(channel_ids)} channels as political")
 
     if video_ids:
         df.loc[df['video_id'].isin(video_ids), 'is_political'] = True
-        print(f"Manually labeled {len(video_ids)} videos as political")
+        logger.info(f"Manually labeled {len(video_ids)} videos as political")
 
     return df
 
@@ -193,34 +206,34 @@ def compare_thresholds(df: pd.DataFrame, max_threshold: int = 4) -> pd.DataFrame
 
     comparison_df = pd.DataFrame(results)
 
-    print("\nThreshold Comparison:")
-    print(comparison_df.to_string(index=False))
+    logger.info("\nThreshold Comparison:")
+    logger.info(f"\n{comparison_df.to_string(index=False)}")
 
     return comparison_df
 
 
 if __name__ == "__main__":
     #Just for some quick testing
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     from load_data import load_full_dataset
 
     df = load_full_dataset()
 
-    print("\n" + "="*80)
-    print("Testing min_signals = 1 (Liberal)")
-    print("="*80)
+    logger.info("\n" + "="*80)
+    logger.info("Testing min_signals = 1 (Liberal)")
+    logger.info("="*80)
     df1 = label_political_content(df, min_signals=1)
 
-    print("\n" + "="*80)
-    print("Testing min_signals = 2 (Balanced - Recommended)")
-    print("="*80)
+    logger.info("\n" + "="*80)
+    logger.info("Testing min_signals = 2 (Balanced - Recommended)")
+    logger.info("="*80)
     df2 = label_political_content(df, min_signals=2)
 
-    print("\n" + "="*80)
-    print("Testing min_signals = 3 (Conservative)")
-    print("="*80)
+    logger.info("\n" + "="*80)
+    logger.info("Testing min_signals = 3 (Conservative)")
+    logger.info("="*80)
     df3 = label_political_content(df, min_signals=3)
 
-    print("\n\nSample of political videos (threshold=2):")
+    logger.info("\n\nSample of political videos (threshold=2):")
     political = df2[df2['is_political']].drop_duplicates('video_id').head(10)
-    print(political[['video_id', 'title', 'signal_count', 'signal_category',
-                     'signal_topic', 'signal_title']].to_string())
+    logger.info(f"\n{political[['video_id', 'title', 'signal_count', 'signal_category', 'signal_topic', 'signal_title']].to_string()}")
