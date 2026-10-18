@@ -49,7 +49,7 @@ def click_home(page):
     try:
         logging.info("Clicking on Home")
         page.locator("a:has-text('Home')").first.click()
-        page.wait_for_selector("a.yt-lockup-metadata-view-model__title", timeout=15000)
+        page.wait_for_selector("a.ytLockupMetadataViewModelTitle", timeout=15000)
         logging.info("Navigated to Home")
     except Exception as e:
         logging.error(f"Error clicking Home: {e}")
@@ -81,7 +81,7 @@ def get_video_id_from_url(url: str) -> str:
 def select_random_video_and_get_recommendations(page, iteration: int):
     try:
         logging.info("Waiting for video cards to load on the page...")
-        videos = page.locator("a.yt-lockup-metadata-view-model__title")
+        videos = page.locator("a.ytLockupMetadataViewModelTitle")
 
         count = videos.count()
         logging.info(f"Found {count} video cards on this page.")

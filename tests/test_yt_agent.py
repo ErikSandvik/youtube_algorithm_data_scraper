@@ -66,7 +66,7 @@ def test_select_random_video_and_get_recommendations(mock_playwright):
     with patch('app.services.yt_agent.random.choice', return_value=1):
         recommendations = yt_agent.select_random_video_and_get_recommendations(mock_page, iteration=5)
 
-        mock_page.locator.assert_called_with("a.yt-lockup-metadata-view-model__title")
+        mock_page.locator.assert_called_with("a.ytLockupMetadataViewModelTitle")
 
         mock_videos_locator.nth.return_value.click.assert_called_once()
 
